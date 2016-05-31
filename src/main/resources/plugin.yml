@@ -1,0 +1,4 @@
+name: ArmorEvent
+main: com.inkzzz.spigot.armorevent.ArmorEventPlugin
+version: 1.0
+author: [Inkzzz]
