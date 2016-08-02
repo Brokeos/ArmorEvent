@@ -11,9 +11,7 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -118,6 +116,12 @@ public final class EventAnalyser implements Listener
                     .stream().filter(e -> e instanceof Player).map(e -> (Player) e).
                     forEach(player -> check(player));
         }
+    }
+
+    @EventHandler
+    public final void onEvent(final PlayerItemBreakEvent event)
+    {
+        this.check(event.getPlayer());
     }
 
     private void check(final Player player)
