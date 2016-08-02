@@ -65,7 +65,14 @@ public final class EventAnalyser implements Listener
         if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)
         {
 
-            String name = event.getItem().getType().name();
+            final ItemStack item = event.getItem();
+
+            if(item == null)
+            {
+                return;
+            }
+
+            final String name = item.getType().name();
 
             if( name.contains("_HELMET") || name.contains("_CHESTPLATE") || name.contains("_LEGGINGS") || name.contains("_BOOTS") )
             {
