@@ -2,10 +2,12 @@ package com.inkzzz.spigot.armorevent;
 
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -100,7 +102,21 @@ public final class EventAnalyser implements Listener
     {
         if( this.getContents().containsKey( event.getPlayer().getUniqueId() ) )
         {
-            this.getContents().remove( event.getPlayer().getUniqueId() );
+            this.getContents().remove(event.getPlayer().getUniqueId());
+        }
+    }
+
+    @EventHandler
+    public final void onEvent(final BlockDispenseEvent event)
+    {
+        final ItemStack item = event.getItem();
+        final Location location = event.getBlock().getLocation();
+
+        if(item != null)
+        {
+            location.getWorld().getNearbyEntities(location, 6, 6, 6)
+                    .stream().filter(e -> e instanceof Player).map(e -> (Player) e).
+                    forEach(player -> check(player));
         }
     }
 
