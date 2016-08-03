@@ -3,6 +3,7 @@ package com.inkzzz.spigot.armorevent;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +18,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
@@ -44,7 +47,7 @@ public final class EventAnalyser implements Listener
             return;
         }
 
-        final Inventory inventory = event.getClickedInventory();
+        final Inventory inventory = event.getInventory();
 
         if(inventory != null && ( inventory.getType() == InventoryType.CRAFTING  || inventory.getType() == InventoryType.PLAYER ))
         {
@@ -103,6 +106,12 @@ public final class EventAnalyser implements Listener
             this.getContents().remove(event.getPlayer().getUniqueId());
         }
     }
+    
+    @EventHandler
+    public final void onEvent(final PlayerItemBreakEvent event)
+    {
+        this.check(event.getPlayer());
+    }
 
     @EventHandler
     public final void onEvent(final BlockDispenseEvent event)
@@ -112,18 +121,32 @@ public final class EventAnalyser implements Listener
 
         if(item != null)
         {
-            location.getWorld().getNearbyEntities(location, 6, 6, 6)
-                    .stream().filter(e -> e instanceof Player).map(e -> (Player) e).
-                    forEach(player -> check(player));
+        	getNearbyEntities(location, 6)
+        	.stream().filter(e -> e instanceof Player).map(e -> (Player) e).
+            forEach(player -> check(player));
+                    
         }
     }
+    
+    public static List<Entity> getNearbyEntities(Location where, int range) {
+    	List<Entity> found = new ArrayList<Entity>(); 
+    	for (Entity entity : where.getWorld().getEntities()) {
+    		if (isInBorder(where, entity.getLocation(), range)) {
+    			found.add(entity);
+    		}
+    	}
+    	return found;
+	}
 
-    @EventHandler
-    public final void onEvent(final PlayerItemBreakEvent event)
-    {
-        this.check(event.getPlayer());
-    }
-
+    public static boolean isInBorder(Location center, Location notCenter, int range) {
+    	int x = center.getBlockX(), z = center.getBlockZ();
+    	int x1 = notCenter.getBlockX(), z1 = notCenter.getBlockZ();
+    	if (x1 >= (x + range) || z1 >= (z + range) || x1 <= (x - range) || z1 <= (z - range)) {
+    		return false;
+    	}
+    	return true;
+	}
+    
     private void check(final Player player)
     {
 
